@@ -1,0 +1,13 @@
+name: Validar JSON
+description: Comprueba que un archivo contiene JSON válido
+
+inputs:
+  archivo:
+    description: Ruta del archivo que se quiere validar
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.archivo }}

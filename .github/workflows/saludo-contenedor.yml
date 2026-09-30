@@ -1,0 +1,16 @@
+name: Saludo desde un contenedor
+
+on: workflow_dispatch
+
+permissions: {}
+
+jobs:
+  ejemplo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Saludar desde un contenedor
+        uses: docker://alpine:3.20
+        with:
+          entrypoint: /bin/sh
+          args: -c "echo Hola desde Alpine"

@@ -1,0 +1,19 @@
+{
+  "nombre": "masivoIA",
+  "version": "1.0.0",
+  "entorno": "desarrollo",
+  "servidor": {
+    "puerto": 8080,
+    "contexto": "/masivoBack"
+  },
+  "logging": {
+    "nivel": "INFO",
+    "habilitado": true
+  },
+  "roles": [
+    "ADMIN",
+    "CLIENTE_TITULAR",
+    "CLIENTE_EMPRESA"
+  ],
+  "descripcion": null
+}

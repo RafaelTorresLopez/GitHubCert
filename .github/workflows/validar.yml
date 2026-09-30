@@ -1,0 +1,19 @@
+name: Validar configuración
+
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v6
+
+      - name: Validar archivo JSON
+        uses: ./.github/actions/validar-json
+        with:
+          archivo: config/aplicacion.json

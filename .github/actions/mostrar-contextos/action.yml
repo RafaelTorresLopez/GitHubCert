@@ -1,0 +1,43 @@
+name: Mostrar contextos
+description: Muestra información de GitHub, del job y de las variables de entorno.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Imprimir información
+      id: imprimir
+      shell: bash
+
+      env:
+        CTX_REF: ${{ github.ref }}
+        CTX_ACTION: ${{ github.action }}
+        CTX_ACTION_REPOSITORY: ${{ github.action_repository }}
+        CTX_ACTION_PATH: ${{ github.action_path }}
+        CTX_REPOSITORY: ${{ github.repository }}
+        CTX_JOB_CONTAINER: ${{ toJSON(job.container) }}
+        CTX_JOB_STATUS: ${{ job.status }}
+        CTX_JOB_WORKFLOW_REF: ${{ job.workflow_ref }}
+        CTX_JOB_WORKFLOW_REPOSITORY: ${{ job.workflow_repository }}
+
+      run: |
+        echo "INFORMACIÓN DE CONTEXTO GITHUB"
+        echo "Referencia mediante contexto: $CTX_REF"
+        echo "Identificador del paso en ejecución: $CTX_ACTION"
+        echo "Repositorio de la acción: $CTX_ACTION_REPOSITORY"
+        echo "Ruta local de la acción: $CTX_ACTION_PATH"
+        echo "Repositorio de la ejecución: $CTX_REPOSITORY"
+
+        echo "INFORMACIÓN DE CONTEXTO JOB"
+        echo "Contenedor del trabajo (JSON): $CTX_JOB_CONTAINER"
+        echo "Estado del trabajo: $CTX_JOB_STATUS"
+        echo "Referencia al workflow del trabajo: $CTX_JOB_WORKFLOW_REF"
+        echo "Repositorio del workflow del trabajo: $CTX_JOB_WORKFLOW_REPOSITORY"
+
+        echo "USO DE VARIABLES DE ENTORNO PREDEFINIDAS"
+        echo "Referencia sobre la rama: $GITHUB_REF"
+
+        echo "USO DE VARIABLES DE ENTORNO PERSONALIZADAS"
+        echo "Workflow: $ENV_WORKFLOW_RTL_01"
+        echo "Job: $ENV_JOB_RTL_01"
+        echo "Paso que invoca la acción: $ENV_ACTION_STEP_RTL_01"

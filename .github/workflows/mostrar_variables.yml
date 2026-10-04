@@ -53,3 +53,22 @@ jobs:
         uses: ./.github/actions/mostrar-contextos
         env:
           ENV_ACTION_STEP_RTL_01: Env_Action_Step_RTL_01
+          
+          
+      - name: condition 1
+        if: runner.os == 'Windows'
+        run: echo "The operating system on the runner is $env:RUNNER_OS."
+      - name: condition 2
+        if: runner.os != 'Windows'
+        run: echo "The operating system on the runner is not Windows, it's $RUNNER_OS."          
+          
+          
+      - name: Set the value
+        id: step_one
+        run: |
+        echo "action_state=yellow" >> "$GITHUB_ENV"
+        
+      - name: Use the value
+        id: step_two
+        run: |
+        printf '%s\n' "$action_state" # This will output 'yellow'          

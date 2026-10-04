@@ -1,4 +1,4 @@
-name: Saludo desde un contenedor
+name: SMostrar Variables
 
 on: 
     workflow_dispatch

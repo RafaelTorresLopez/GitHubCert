@@ -1,11 +1,10 @@
 name: Mostrar Variables
 
-on: 
-    workflow_dispatch
-       
+on:
+  workflow_dispatch:
+
 env:
   ENV_WORKFLOW_RTL_01: Env_Workflow_RTL_01
-    
 
 permissions:
   contents: read
@@ -13,39 +12,44 @@ permissions:
 jobs:
   ejemplo:
     runs-on: ubuntu-latest
+
     env:
       ENV_JOB_RTL_01: Env_Job_RTL_01
-      JOB_JSON: ${{ toJSON(job) }}
 
     steps:
-      - name: Imprimir datos de contexto.
+      - name: Imprimir datos de contexto
+        id: imprimir_contextos
         env:
-            ENV_STEP_RTL_01: Env_Step_RTL_01            
-        run: |
-           echo "INFORMACIÓN DE CONTEXTO GITHUB"
-           echo "Referencia mediante contexto: ${{ github.ref }}"
-           echo "Referencia mediante contexto: $JOB_JSON"
-           echo "Nombre de la acción actualmente en ejecución: ${{ github.action }}"
-           echo "Nombre del repositorio de la acción: ${{ github.action_repository }}"
-           echo "INFORMACIÓN DE CONTEXTO JOB"
-           echo "Nombre del contenedor del trabajo: ${{ job.container }}"
-           echo "Estado del trabajo: ${{ job.status }}"
-           echo "Referencia al workflow del trabajo: ${{ job.workflow_ref }}"
-           echo "Referencia al repositorio del trabajo: ${{ job.workflow_repository }}"
-           echo "USO DE VARIABLES DE ENTORNO PREDEFINIDAS"
-           echo "Referencia sobre la rama: $GITHUB_REF"
-           echo "$ENV_WORKFLOW_RTL_01 - $ENV_JOB_RTL_01 - $ENV_STEP_RTL_01"
-           echo "JOB_JSON: $JOB_JSON"
+          ENV_STEP_RTL_01: Env_Step_RTL_01
+          JOB_JSON: ${{ toJSON(job) }}
+          JOB_CONTAINER_JSON: ${{ toJSON(job.container) }}
 
-      - name: Descargar Código
+        run: |
+          echo "INFORMACIÓN DE CONTEXTO GITHUB"
+          echo "Referencia: ${{ github.ref }}"
+          echo "Identificador del paso actual: ${{ github.action }}"
+          echo "Repositorio de la ejecución: ${{ github.repository }}"
+
+          echo "INFORMACIÓN DE CONTEXTO JOB"
+          echo "Contenedor del trabajo (JSON): $JOB_CONTAINER_JSON"
+          echo "Estado del trabajo: ${{ job.status }}"
+          echo "Referencia al workflow del trabajo: ${{ job.workflow_ref }}"
+          echo "Repositorio del workflow del trabajo: ${{ job.workflow_repository }}"
+
+          echo "CONTEXTO JOB COMPLETO"
+          printf '%s\n' "$JOB_JSON"
+
+          echo "USO DE VARIABLES DE ENTORNO PREDEFINIDAS"
+          echo "Referencia sobre la rama: $GITHUB_REF"
+
+          echo "USO DE VARIABLES DE ENTORNO PERSONALIZADAS"
+          echo "$ENV_WORKFLOW_RTL_01 - $ENV_JOB_RTL_01 - $ENV_STEP_RTL_01"
+
+      - name: Descargar código
         uses: actions/checkout@v4
-        env:
-            ENV_ACTION_STEP_RTL_01: Env_Action_Step_RTL_01
-            
 
       - name: Imprimir datos mediante mi acción
         id: mostrar_contextos
         uses: ./.github/actions/mostrar-contextos
         env:
-          ENV_ACTION_STEP_RTL_01: Env_Action_Step_RTL_01            
-     
+          ENV_ACTION_STEP_RTL_01: Env_Action_Step_RTL_01

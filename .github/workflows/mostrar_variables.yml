@@ -1,0 +1,34 @@
+name: Saludo desde un contenedor
+
+on: 
+    workflow_dispatch
+       
+env:
+  ENV_WORKFLOW_RTL_01: Env_Workflow_RTL_01
+    
+
+permissions: {}
+
+jobs:
+  ejemplo:
+    runs-on: ubuntu-latest
+    env:
+      ENV_JOB_RTL_01: Env_Job_RTL_01
+
+    steps:
+      - name: Imprimir datos de contexto.
+        env:
+            ENV_STEP_RTL_01: Env_Step_RTL_01
+        run: |
+           echo "Informacion de contexto github"
+           echo "Referencia mediante contexto: ${{ github.ref }}"
+           echo "Nombre de la acción actualmente en ejecución: ${{ github.action }}"
+           echo "Nombre del repositorio de la acción: ${{ github.action_repository }}"
+           echo "Informacion de contexto job"
+           echo "Nombre del contenedor del trabajo: ${{ job.container }}"
+           echo "Estado del trabajo: ${{ job.status }}"
+           echo "Referencia al workflow del trabajo: ${{ job.workflow_ref }}"
+           echo "Referencia al repositorio del trabajo: ${{ job.workflow_repository }}"
+           echo "USO DE VARIABLES DE ENTORNO PREDEFINIDAS"
+           echo "Referencia sobre la rama: $GITHUB_REF"
+           echo "$ENV_WORKFLOW_RTL_01 - $ENV_JOB_RTL_01 - $ENV_STEP_RTL_01"

@@ -1,0 +1,22 @@
+name: Share data between jobs
+on: push
+jobs:
+  job_1:
+    name: Upload File
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World" > file.txt
+      - uses: actions/upload-artifact@v2
+        with:
+          name: file
+          path: ./files/file.txt
+
+  job_2:
+    name: Download File
+    runs-on: ubuntu-latest
+    needs: job_1
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: file
+      - run: cat ./files/file.txt

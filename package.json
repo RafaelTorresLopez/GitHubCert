@@ -1,0 +1,9 @@
+{
+  "name": "githubcert-node-minimo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proyecto minimo para practicar CI con GitHub Actions",
+  "scripts": {
+    "test": "node --test suma.test.js"
+  }
+}

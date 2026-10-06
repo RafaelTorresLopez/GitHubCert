@@ -77,3 +77,4 @@ Se ha ejecutado el programa Python con el JSON incluido (éxito), con JSON invá
 
 ## Para visualizar el estado del workflow
 [![Node.js CI](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/node.js.yml/badge.svg?branch=main&event=push)](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/node.js.yml)
+[![Mostrar Variables](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/mostrar_variables.yml/badge.svg)](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/mostrar_variables.yml)

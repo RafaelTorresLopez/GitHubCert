@@ -18,6 +18,7 @@ jobs:
         with:
           name: file
           path: files/file.txt
+          retention-days: 10  # Por defecto son 90 días, establecemos 10
           if-no-files-found: error
 
   job_2:

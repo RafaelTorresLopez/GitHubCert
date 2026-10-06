@@ -72,3 +72,8 @@ Se ha ejecutado el programa Python con el JSON incluido (éxito), con JSON invá
 - https://docs.github.com/en/actions/tutorials/use-containerized-services/create-a-docker-container-action
 - https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax
 - https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
+
+
+
+## Para visualizar el estado del workflow
+[![Node.js CI](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/node.js.yml/badge.svg?branch=main&event=push)](https://github.com/RafaelTorresLopez/GitHubCert/actions/workflows/node.js.yml)

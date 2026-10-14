@@ -1,0 +1,24 @@
+name: Consultar repositorio
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consultar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mostrar información del repositorio
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const respuesta = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            console.log(respuesta.data.full_name);
+            console.log(respuesta.data.default_branch);

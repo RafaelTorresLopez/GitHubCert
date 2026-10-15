@@ -1,34 +1,79 @@
 name: Learning GitHub Script
+
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled]
+
+permissions: {}
+
 jobs:
   comment:
+    name: Comentar la nueva issue
+    if: github.event.action == 'opened'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Comment on new issue
-        uses: actions/github-script@0.8.0
+      - name: Descargar el repositorio
+        uses: actions/checkout@v6
         with:
-          github-token: {% raw %}${{secrets.GITHUB_TOKEN}}{% endraw %}
-          script: |
-             const fs = require('fs')
-             const issueBody = fs.readFileSync(".github/ISSUE_RESPONSES/comment.md", "utf8")
-             github.issues.createComment({
-             issue_number: context.issue.number,
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             body: issueBody
-             })
-      - name: Add issue to project board
-        if: contains(github.event.issue.labels.*.name, 'bug')
-        uses: actions/github-script@0.8.0
+          persist-credentials: false
+
+      - name: Publicar comentario
+        uses: actions/github-script@v9
         with:
-          github-token: {% raw %}${{secrets.GITHUB_TOKEN}}{% endraw %}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.projects.createCard({
-            column_id: {{columnID}},
-            content_id: context.payload.issue.id,
-            content_type: "Issue"
+            const fs = require('node:fs');
+
+            // Puedes personalizar el comentario creando este archivo.
+            const templatePath = '.github/ISSUE_RESPONSES/comment.md';
+            const body = fs.existsSync(templatePath)
+              ? fs.readFileSync(templatePath, 'utf8')
+              : '¡Gracias por abrir esta issue! La revisaremos próximamente.';
+
+            if (!body.trim()) {
+              throw new Error('El archivo de respuesta no puede estar vacío.');
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
             });
+
+  add-to-project:
+    name: Añadir una issue bug al Project
+    # Este trabajo es opcional: se omite si PROJECT_URL no está configurada.
+    # Solo actúa al abrir una issue con bug o al añadir específicamente bug.
+    if: >-
+      vars.PROJECT_URL != '' &&
+      contains(github.event.issue.labels.*.name, 'bug') &&
+      (github.event.action == 'opened' || github.event.label.name == 'bug')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Comprobar configuración del token
+        env:
+          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          if [ -z "$PROJECT_TOKEN" ]; then
+            echo "::error::Configura el secreto PROJECT_TOKEN para acceder al Project."
+            exit 1
+          fi
+
+      # Configura en Settings > Secrets and variables > Actions:
+      # - Variable PROJECT_URL: URL de un Project actual, por ejemplo:
+      #   https://github.com/users/TU_USUARIO/projects/1
+      #   https://github.com/orgs/TU_ORGANIZACION/projects/1
+      # - Secreto PROJECT_TOKEN: token con acceso al Project y a las issues.
+      #   GITHUB_TOKEN no permite acceder directamente a estos Projects.
+      - name: Añadir al Project
+        uses: actions/add-to-project@v2
+        with:
+          project-url: ${{ vars.PROJECT_URL }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          labeled: bug

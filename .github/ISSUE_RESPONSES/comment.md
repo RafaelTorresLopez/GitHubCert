@@ -1,0 +1,1 @@
+Es un ejemplo de escritura de un comentario automático sobre una Issue creada - RTL

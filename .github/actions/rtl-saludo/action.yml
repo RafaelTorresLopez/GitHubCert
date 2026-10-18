@@ -1,0 +1,14 @@
+name: RTL Saludo local
+description: Accion guardada junto con el proyecto personal
+inputs:
+  nombre:
+    description: Persona a saludar
+    default: Rafael
+    required: false
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        RTL_NOMBRE: ${{ inputs.nombre }}
+      run: bash "$GITHUB_ACTION_PATH/saludar.sh"

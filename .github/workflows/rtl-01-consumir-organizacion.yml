@@ -1,0 +1,22 @@
+name: RTL 01 Personal consume organizacion
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ci:
+    uses: OrganizacionRTL/rtl-automatizaciones/.github/workflows/ci-node.yml@v1.0.0
+    with:
+      node-version: '22'
+      working-directory: apps/rtl-demo
+  accion-directa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: OrganizacionRTL/rtl-automatizaciones/actions/setup-env@v1.0.0
+        with:
+          working-directory: apps/rtl-demo
+      - working-directory: apps/rtl-demo
+        run: npm test

@@ -1,0 +1,20 @@
+name: RTL Workflow reutilizable local
+on:
+  workflow_call:
+    inputs:
+      nombre:
+        type: string
+        default: Rafael
+        required: false
+permissions:
+  contents: read
+jobs:
+  saludar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/rtl-saludo
+        with:
+          nombre: ${{ inputs.nombre }}

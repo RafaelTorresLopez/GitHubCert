@@ -1,0 +1,10 @@
+name: RTL 02 Todo dentro de GitHubCert
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  llamada-local:
+    uses: ./.github/workflows/rtl-local-reutilizable.yml
+    with:
+      nombre: Rafael Torres Lopez

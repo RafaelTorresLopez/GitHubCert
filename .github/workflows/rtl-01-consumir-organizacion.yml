@@ -1,4 +1,4 @@
-name: RTL 01 Personal consume organizacion
+name: RTL 01 Personal consume organizacion.
 on:
   workflow_dispatch:
 permissions:

@@ -1,0 +1,96 @@
+name: Practica de acciones personalizadas
+
+on:
+  push:
+    branches: [main, 'feature/**']
+  workflow_dispatch:
+    inputs:
+      cli-version:
+        description: Version de MyCLI didactica
+        type: choice
+        options: ['1.2.3', '1.2.4', latest]
+        default: '1.2.3'
+
+permissions:
+  contents: read
+
+jobs:
+  javascript-y-composite:
+    runs-on: ubuntu-latest
+    env:
+      CLI_VERSION: ${{ inputs.cli-version || '1.2.3' }}
+    steps:
+      # Obligatorio antes de usar una accion local mediante ./...
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # Prepara el Node del PATH para la CLI (su shebang usa env node).
+      # El runtime de la accion JS lo decide runs.using, de forma independiente.
+      - name: Preparar Node para la CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Instalar MyCLI con mi accion JavaScript
+        id: instalar
+        uses: ./.github/actions/setup-mycli
+        with:
+          version: ${{ env.CLI_VERSION }}
+
+      - name: Usar el comando en un paso posterior
+        env:
+          VERSION: ${{ steps.instalar.outputs.version }}
+          BIN_PATH: ${{ steps.instalar.outputs.bin-path }}
+          REUSED: ${{ steps.instalar.outputs.reused }}
+        run: |
+          printf 'Version recibida: %s\n' "$VERSION"
+          printf 'Directorio instalado: %s\n' "$BIN_PATH"
+          printf 'Reutilizado: %s\n' "$REUSED"
+          command -v mycli
+          test "$(mycli --version)" = "$VERSION"
+          mycli greet "Rafael"
+          mycli validate-json ejemplos/aplicacion.json
+
+      - name: Repetir instalacion en el mismo job
+        id: repetir
+        uses: ./.github/actions/setup-mycli
+        with:
+          version: ${{ env.CLI_VERSION }}
+
+      - name: Comprobar reutilizacion
+        env:
+          REUSED: ${{ steps.repetir.outputs.reused }}
+        run: test "$REUSED" = "true"
+
+      - name: Invocar mi accion compuesta
+        id: compuesta
+        uses: ./.github/actions/probar-mycli
+        with:
+          nombre: Rafael Torres
+          archivo: ejemplos/aplicacion.json
+
+      - name: Mostrar salida de la accion compuesta
+        env:
+          RESULTADO: ${{ steps.compuesta.outputs.script-result }}
+        run: |
+          printf 'Resultado: %s\n' "$RESULTADO"
+          test "$RESULTADO" = "Success"
+          printf '### Practica completada\n\nMyCLI y acciones locales: correctas.\n' >> "$GITHUB_STEP_SUMMARY"
+
+  contenedor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Ejecutar mi accion Docker
+        id: docker
+        uses: ./.github/actions/saludo-docker
+        with:
+          nombre: Rafael
+      - name: Mostrar salida del contenedor
+        env:
+          MENSAJE: ${{ steps.docker.outputs.mensaje }}
+        run: printf '%s\n' "$MENSAJE"

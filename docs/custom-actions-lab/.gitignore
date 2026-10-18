@@ -1,0 +1,3 @@
+node_modules/
+*.log
+# dist/ NO se ignora: debe subirse junto a la accion.

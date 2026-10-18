@@ -1,0 +1,16 @@
+{
+  "name": "practica-acciones-personalizadas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Practica ejecutable de acciones JavaScript, compuestas y Docker",
+  "scripts": {
+    "build:action": "ncc build .github/actions/setup-mycli/index.js -o .github/actions/setup-mycli/dist --license licenses.txt",
+    "test": "node --test tests/*.test.cjs"
+  },
+  "dependencies": {
+    "@actions/core": "1.11.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "0.38.3"
+  }
+}

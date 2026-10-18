@@ -1,0 +1,31 @@
+name: Probar MyCLI
+description: Accion compuesta que ejecuta varios comandos y publica un resultado
+inputs:
+  nombre:
+    description: Nombre para el saludo
+    default: Rafael
+  archivo:
+    description: JSON que se validara, relativo al workspace
+    default: ejemplos/aplicacion.json
+outputs:
+  script-result:
+    description: Resultado de los comandos
+    value: ${{ steps.comprobar.outputs.result }}
+runs:
+  using: composite
+  steps:
+    - name: Mostrar version y saludar
+      shell: bash
+      env:
+        NOMBRE: ${{ inputs.nombre }}
+      run: |
+        mycli --version
+        mycli greet "$NOMBRE"
+    - name: Validar archivo
+      id: comprobar
+      shell: bash
+      env:
+        ARCHIVO: ${{ inputs.archivo }}
+      run: |
+        mycli validate-json "$ARCHIVO"
+        echo "result=Success" >> "$GITHUB_OUTPUT"

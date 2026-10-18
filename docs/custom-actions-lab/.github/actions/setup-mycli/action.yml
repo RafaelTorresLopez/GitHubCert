@@ -1,0 +1,17 @@
+name: Setup MyCLI didactica
+description: Instala una CLI local de ejemplo, registra PATH y publica salidas
+inputs:
+  version:
+    description: Version didactica (1.2.3, 1.2.4 o latest)
+    required: false
+    default: latest
+outputs:
+  version:
+    description: Version resuelta e instalada
+  bin-path:
+    description: Directorio agregado al PATH
+  reused:
+    description: true cuando se reutiliza una instalacion valida del job
+runs:
+  using: node24
+  main: dist/index.js

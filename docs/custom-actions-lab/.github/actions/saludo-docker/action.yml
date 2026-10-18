@@ -1,0 +1,14 @@
+name: Saludo Docker
+description: Demostracion minima de una accion de contenedor
+inputs:
+  nombre:
+    description: Nombre para el saludo
+    default: Rafael
+outputs:
+  mensaje:
+    description: Saludo calculado dentro del contenedor
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.nombre }}

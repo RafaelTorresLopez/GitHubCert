@@ -1,0 +1,57 @@
+name: RTL - Entradas manuales
+
+on:
+  workflow_dispatch:
+    inputs:
+      mensaje:
+        description: 'Mensaje de prueba'
+        type: string
+        required: true
+        default: 'Hola Rafael'
+
+      ejecutar_pruebas:
+        description: 'Ejecutar las pruebas'
+        type: boolean
+        default: true
+
+      repeticiones:
+        description: 'Número de repeticiones'
+        type: number
+        default: 2
+
+      nivel_log:
+        description: 'Nivel de detalle'
+        type: choice
+        default: info
+        options:
+          - debug
+          - info
+          - warning
+
+      entorno:
+        description: 'Entorno de destino'
+        type: environment
+        required: true
+
+permissions: {}
+
+jobs:
+  mostrar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mostrar entradas
+        env:
+          MENSAJE: ${{ inputs.mensaje }}
+          REPETICIONES: ${{ inputs.repeticiones }}
+          NIVEL_LOG: ${{ inputs.nivel_log }}
+          ENTORNO: ${{ inputs.entorno }}
+        run: |
+          echo "Mensaje: $MENSAJE"
+          echo "Repeticiones: $REPETICIONES"
+          echo "Nivel: $NIVEL_LOG"
+          echo "Entorno seleccionado: $ENTORNO"
+
+      - name: Simular pruebas
+        if: inputs.ejecutar_pruebas
+        run: echo "Ejecutando pruebas"

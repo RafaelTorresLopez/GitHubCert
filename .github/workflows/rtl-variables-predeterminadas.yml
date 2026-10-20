@@ -1,0 +1,69 @@
+name: RTL - Variables predeterminadas
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  MI_VARIABLE: 'Definida en el YAML'
+
+jobs:
+  mostrar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mostrar variables con Bash
+        shell: bash
+        env:
+          CONTEXTO_CI: ${{ env.CI }}
+          CONTEXTO_REF: ${{ github.ref }}
+          CONTEXTO_MI_VARIABLE: ${{ env.MI_VARIABLE }}
+        run: |
+          echo "=== Lectura directa desde Bash ==="
+          printf 'CI = <%s>\n' "$CI"
+          printf 'GITHUB_REF = <%s>\n' "$GITHUB_REF"
+          printf 'MI_VARIABLE = <%s>\n' "$MI_VARIABLE"
+
+          echo "=== Lectura mediante contextos ==="
+          printf 'env.CI = <%s>\n' "$CONTEXTO_CI"
+          printf 'github.ref = <%s>\n' "$CONTEXTO_REF"
+          printf 'env.MI_VARIABLE = <%s>\n' "$CONTEXTO_MI_VARIABLE"
+
+          echo "=== Variables predeterminadas presentes ==="
+          while IFS= read -r nombre; do
+            if [[ "$nombre" == "CI" ||
+                  "$nombre" == GITHUB_* ||
+                  "$nombre" == RUNNER_* ]]; then
+              printf '%s=%s\n' "$nombre" "${!nombre}"
+            fi
+          done < <(compgen -e | sort -u)
+
+      - name: Mostrar variables con PowerShell
+        shell: pwsh
+        env:
+          CONTEXTO_CI: ${{ env.CI }}
+          CONTEXTO_REF: ${{ github.ref }}
+          CONTEXTO_MI_VARIABLE: ${{ env.MI_VARIABLE }}
+        run: |
+          Write-Host "=== Lectura directa desde PowerShell ==="
+          Write-Host "CI = <$env:CI>"
+          Write-Host "GITHUB_REF = <$env:GITHUB_REF>"
+          Write-Host "MI_VARIABLE = <$env:MI_VARIABLE>"
+
+          Write-Host "=== Lectura mediante contextos ==="
+          Write-Host "env.CI = <$env:CONTEXTO_CI>"
+          Write-Host "github.ref = <$env:CONTEXTO_REF>"
+          Write-Host "env.MI_VARIABLE = <$env:CONTEXTO_MI_VARIABLE>"
+
+          Write-Host "=== Variables predeterminadas presentes ==="
+          Get-ChildItem Env: |
+            Where-Object {
+              $_.Name -eq 'CI' -or
+              $_.Name -like 'GITHUB_*' -or
+              $_.Name -like 'RUNNER_*'
+            } |
+            Sort-Object Name |
+            ForEach-Object {
+              Write-Host ("{0}={1}" -f $_.Name, $_.Value)
+            }

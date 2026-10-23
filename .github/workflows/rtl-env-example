@@ -1,0 +1,70 @@
+name: RTL - Comparar env y GITHUB_ENV
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  APLICACION: GitHubCert
+  NIVEL_LOG: info
+
+jobs:
+  demostracion:
+    runs-on: ubuntu-latest
+
+    env:
+      NIVEL_LOG: debug
+
+    steps:
+      - name: Leer configuración declarada
+        shell: bash
+        run: |
+          echo "Aplicación: $APLICACION"
+          echo "Nivel del job: $NIVEL_LOG"
+          echo "Versión dinámica: ${VERSION_RTL:-todavía no definida}"
+
+      - name: Sobrescribir configuración para este paso
+        shell: bash
+        env:
+          NIVEL_LOG: warning
+        run: echo "Nivel de este paso: $NIVEL_LOG"
+
+      - name: Calcular datos y publicarlos
+        shell: bash
+        run: |
+          version_calculada="1.0.$GITHUB_RUN_NUMBER"
+          fecha_calculada="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+          echo "VERSION_RTL=$version_calculada" >> "$GITHUB_ENV"
+          echo "FECHA_RTL=$fecha_calculada" >> "$GITHUB_ENV"
+
+          echo "Versión calculada localmente: $version_calculada"
+          echo "VERSION_RTL en este proceso: ${VERSION_RTL:-todavía no definida}"
+
+      - name: Consumir datos desde Bash
+        shell: bash
+        run: |
+          echo "Aplicación: $APLICACION"
+          echo "Nivel del job: $NIVEL_LOG"
+          echo "Versión: $VERSION_RTL"
+          echo "Fecha: $FECHA_RTL"
+
+      - name: Consumir los mismos datos desde PowerShell
+        shell: pwsh
+        run: |
+          Write-Host "Aplicación: $env:APLICACION"
+          Write-Host "Versión: $env:VERSION_RTL"
+          Write-Host "Fecha: $env:FECHA_RTL"
+
+  otro_job:
+    needs: demostracion
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Comprobar aislamiento entre jobs
+        shell: bash
+        run: |
+          echo "Aplicación del workflow: $APLICACION"
+          echo "Nivel del workflow: $NIVEL_LOG"
+          echo "Versión del otro job: ${VERSION_RTL:-no disponible}"
